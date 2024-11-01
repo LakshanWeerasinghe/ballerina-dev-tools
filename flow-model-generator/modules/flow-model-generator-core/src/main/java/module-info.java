@@ -17,21 +17,20 @@
  */
 
 module io.ballerina.flow.model.generator {
-    requires io.ballerina.lang;
-    requires io.ballerina.tools.api;
-    requires io.ballerina.parser;
     requires io.ballerina.formatter.core;
     requires io.ballerina.language.server.commons;
     requires io.ballerina.language.server.core;
     requires org.eclipse.lsp4j;
-    requires io.ballerina.diagram.util;
-    requires io.ballerina.central.client;
-    requires com.google.gson;
     requires com.graphqljava;
     requires io.ballerina.openapi.core;
     requires io.swagger.v3.oas.models;
     requires jakarta.persistence;
     requires org.xerial.sqlitejdbc;
+    requires io.ballerina.diagram.util;
+    requires io.ballerina.lang;
+    requires com.google.gson;
+    requires io.ballerina.parser;
+    requires io.ballerina.tools.api;
 
     exports io.ballerina.flowmodelgenerator.core;
 }
