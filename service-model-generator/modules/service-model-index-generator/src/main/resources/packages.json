@@ -1,0 +1,8 @@
+{
+  "ballerina": [
+    {
+      "name": "http",
+      "version": "2.12.2"
+    }
+  ]
+}
