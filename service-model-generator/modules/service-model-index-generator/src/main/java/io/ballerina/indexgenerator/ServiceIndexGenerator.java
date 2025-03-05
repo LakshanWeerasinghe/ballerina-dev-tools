@@ -24,6 +24,8 @@ import io.ballerina.compiler.api.ModuleID;
 import io.ballerina.compiler.api.SemanticModel;
 import io.ballerina.compiler.api.TypeBuilder;
 import io.ballerina.compiler.api.Types;
+import io.ballerina.compiler.api.symbols.AnnotationAttachPoint;
+import io.ballerina.compiler.api.symbols.AnnotationSymbol;
 import io.ballerina.compiler.api.symbols.ArrayTypeSymbol;
 import io.ballerina.compiler.api.symbols.ClassSymbol;
 import io.ballerina.compiler.api.symbols.Documentable;
@@ -80,6 +82,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Index generator to cache functions and connectors.
@@ -92,6 +95,9 @@ class ServiceIndexGenerator {
             List<PackageMetadataInfo>>>() { }.getType();
     private static final Logger LOGGER = Logger.getLogger(ServiceIndexGenerator.class.getName());
     private static final String PACKAGE_JSON_FILE = "packages.json";
+    private static final List<AnnotationAttachPoint> ANNOTATION_ATTACH_POINTS = List.of(
+            AnnotationAttachPoint.SERVICE, AnnotationAttachPoint.FUNCTION, AnnotationAttachPoint.RESOURCE,
+            AnnotationAttachPoint.CLASS, AnnotationAttachPoint.OBJECT_METHOD);
 
     public static void main(String[] args) {
         DatabaseManager.createDatabase();
@@ -160,7 +166,83 @@ class ServiceIndexGenerator {
 
             // TODO: handle service types
 
-            // TODO: process the annotation attachments
+            if (symbol instanceof AnnotationSymbol annotationSymbol) {
+                List<AnnotationAttachPoint> annotationAttachPoints = annotationSymbol.attachPoints().stream()
+                        .filter(ANNOTATION_ATTACH_POINTS::contains)
+                        .toList();
+                if (annotationAttachPoints.isEmpty() || annotationSymbol.typeDescriptor().isEmpty()
+                        || annotationSymbol.getName().isEmpty()) {
+                    continue;
+                }
+                TypeSymbol typeSymbol = annotationSymbol.typeDescriptor().get();
+                if (!(CommonUtils.getRawType(typeSymbol) instanceof RecordTypeSymbol recordTypeSymbol)) {
+                    continue;
+                }
+                String annotationName = annotationSymbol.getName().get();
+                int annotationId = DatabaseManager.insertAnnotation(packageId, annotationName,
+                        annotationAttachPoints.stream().map(AnnotationAttachPoint::toString)
+                                .collect(Collectors.joining(",")));
+                processAnnotationSymbol(recordTypeSymbol, annotationId, new HashMap<>(), resolvedPackage,
+                        null, semanticModel, true);
+            }
+        }
+    }
+
+    private static void processAnnotationSymbol(RecordTypeSymbol annotType,
+                                                int annotationId,
+                                                Map<String, String> documentationMap,
+                                                Package resolvedPackage,
+                                                ModuleInfo defaultModuleInfo,
+                                                SemanticModel semanticModel,
+                                                boolean insert) {
+        for (TypeSymbol includedType : annotType.typeInclusions()) {
+            if (!(CommonUtil.getRawType(includedType) instanceof RecordTypeSymbol recordTypeSymbol)) {
+                continue;
+            }
+            processAnnotationSymbol(recordTypeSymbol, annotationId, documentationMap, resolvedPackage,
+                    defaultModuleInfo, semanticModel, false);
+        }
+        for (Map.Entry<String, RecordFieldSymbol> entry : annotType.fieldDescriptors().entrySet()) {
+            RecordFieldSymbol recordFieldSymbol = entry.getValue();
+            TypeSymbol typeSymbol = recordFieldSymbol.typeDescriptor();
+            TypeSymbol fieldType = CommonUtil.getRawType(typeSymbol);
+            if (fieldType.typeKind() == TypeDescKind.NEVER) {
+                continue;
+            }
+            String fieldName = entry.getKey();
+            String paramDescription = entry.getValue().documentation()
+                    .flatMap(Documentation::description).orElse("");
+            if (documentationMap.containsKey(fieldName) && !paramDescription.isEmpty()) {
+                documentationMap.put(fieldName, paramDescription);
+            } else if (!documentationMap.containsKey(fieldName)) {
+                documentationMap.put(fieldName, paramDescription);
+            }
+            if (!insert) {
+                continue;
+            }
+
+            Location symbolLocation = recordFieldSymbol.getLocation().get();
+            Document document = findDocument(resolvedPackage, symbolLocation.lineRange().fileName());
+            String defaultValue;
+            if (document != null) {
+                defaultValue = getAttributeDefaultValue(document.syntaxTree().rootNode(),
+                        symbolLocation, resolvedPackage.packageName().value());
+                if (defaultValue == null) {
+                    defaultValue = DefaultValueGeneratorUtil.getDefaultValueForType(fieldType);
+                }
+            } else {
+                defaultValue = DefaultValueGeneratorUtil.getDefaultValueForType(fieldType);
+            }
+            String fieldTypeName = CommonUtils.getTypeSignature(semanticModel, typeSymbol, false);
+            int optional = 0;
+            if (recordFieldSymbol.isOptional() || recordFieldSymbol.hasDefaultValue()) {
+                optional = 1;
+            }
+
+            int annotFieldId = DatabaseManager.insertAnnotationField(annotationId, fieldName, paramDescription,
+                    "FIELD", fieldTypeName, defaultValue, optional,
+                    CommonUtils.getImportStatements(typeSymbol, defaultModuleInfo).orElse(null));
+            insertParamOrAnnoFieldMemberTypes(annotFieldId, typeSymbol, semanticModel, false);
         }
     }
 
@@ -245,7 +327,7 @@ class ServiceIndexGenerator {
         }
         int paramId = DatabaseManager.insertListenerParameter(functionId, paramName, paramDescription, paramType,
                 defaultValue, parameterKind, optional, importStatements);
-        insertParameterMemberTypes(paramId, typeSymbol, semanticModel);
+        insertParamOrAnnoFieldMemberTypes(paramId, typeSymbol, semanticModel, true);
     }
 
     protected static void addIncludedRecordParamsToDb(RecordTypeSymbol recordTypeSymbol, int functionId,
@@ -296,7 +378,7 @@ class ServiceIndexGenerator {
                     documentationMap.get(paramName), paramType, defaultValue,
                     FunctionParameterKind.INCLUDED_FIELD, optional,
                     CommonUtils.getImportStatements(typeSymbol, defaultModuleInfo).orElse(null));
-            insertParameterMemberTypes(paramId, typeSymbol, semanticModel);
+            insertParamOrAnnoFieldMemberTypes(paramId, typeSymbol, semanticModel, true);
         }
         recordTypeSymbol.restTypeDescriptor().ifPresent(typeSymbol -> {
             String paramType = CommonUtils.getTypeSignature(semanticModel, typeSymbol, false);
@@ -308,8 +390,8 @@ class ServiceIndexGenerator {
         });
     }
 
-    private static void insertParameterMemberTypes(int parameterId, TypeSymbol typeSymbol,
-                                                   SemanticModel semanticModel) {
+    private static void insertParamOrAnnoFieldMemberTypes(int parameterId, TypeSymbol typeSymbol,
+                                                          SemanticModel semanticModel, boolean param) {
         Types types = semanticModel.types();
         TypeBuilder builder = semanticModel.types().builder();
         UnionTypeSymbol union = builder.UNION_TYPE.withMemberTypes(
@@ -318,7 +400,7 @@ class ServiceIndexGenerator {
 
         if (typeSymbol instanceof UnionTypeSymbol unionTypeSymbol) {
             unionTypeSymbol.memberTypeDescriptors().forEach(
-                    memberType -> insertParameterMemberTypes(parameterId, memberType, semanticModel));
+                    memberType -> insertParamOrAnnoFieldMemberTypes(parameterId, memberType, semanticModel, param));
             return;
         }
 
@@ -379,23 +461,15 @@ class ServiceIndexGenerator {
             kind = "ERROR_TYPE";
         }
 
-        DatabaseManager.insertParameterMemberType(parameterId, type, kind, packageIdentifier);
+        if (param) {
+            DatabaseManager.insertParameterMemberType(parameterId, type, kind, packageIdentifier);
+        } else {
+            DatabaseManager.insertAnnotationFieldMemberType(parameterId, type, kind, packageIdentifier);
+        }
     }
 
     private static String getDescription(Documentable documentable) {
         return documentable.documentation().flatMap(Documentation::description).orElse("");
-    }
-
-    enum FunctionType {
-        FUNCTION,
-        REMOTE,
-        LISTENER_INIT,
-        RESOURCE
-    }
-
-    enum AttachToServiceKind {
-        SERVICE,
-        LISTENER
     }
 
     enum FunctionParameterKind {
@@ -415,9 +489,6 @@ class ServiceIndexGenerator {
                 return REST_PARAMETER;
             }
             return FunctionParameterKind.valueOf(value);
-        }
-
-        private FunctionParameterKind() {
         }
     }
 

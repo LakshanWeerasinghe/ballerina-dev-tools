@@ -121,4 +121,25 @@ class DatabaseManager {
         insertEntry(sql, new Object[]{parameterId, type, kind, packageIdentifier});
     }
 
+    public static int insertAnnotation(int packageId, String name, String attachmentPoints) {
+        String sql = "INSERT INTO Annotation (package_id, name, attachment_points) VALUES (?, ?, ?)";
+        return insertEntry(sql, new Object[]{packageId, name, attachmentPoints});
+    }
+
+    public static int insertAnnotationField(int annotationId, String name, String description, String kind, String type,
+                                            String defaultValue, int optional, String importStatements) {
+        String sql = "INSERT INTO AnnotationField (annotation_id, name, description, kind, type, default_value, " +
+                "optional, import_statements) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        return insertEntry(sql, new Object[]{annotationId, name, description, kind, type,
+                defaultValue, optional, importStatements});
+    }
+
+
+    public static int insertAnnotationFieldMemberType(int annotationFieldId, String type, String kind,
+                                                      String packageIdentifier) {
+        String sql = "INSERT INTO AnnotationFieldMemberType (annotation_field_id, type, kind, package) " +
+                "VALUES (?, ?, ?, ?)";
+        return insertEntry(sql, new Object[]{annotationFieldId, type, kind, packageIdentifier});
+    }
+
 }
