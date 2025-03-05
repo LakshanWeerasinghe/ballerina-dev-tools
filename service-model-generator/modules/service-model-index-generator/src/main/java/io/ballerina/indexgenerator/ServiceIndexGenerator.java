@@ -97,7 +97,7 @@ class ServiceIndexGenerator {
     private static final String PACKAGE_JSON_FILE = "packages.json";
     private static final List<AnnotationAttachPoint> ANNOTATION_ATTACH_POINTS = List.of(
             AnnotationAttachPoint.SERVICE, AnnotationAttachPoint.FUNCTION, AnnotationAttachPoint.RESOURCE,
-            AnnotationAttachPoint.CLASS, AnnotationAttachPoint.OBJECT_METHOD);
+            AnnotationAttachPoint.OBJECT_METHOD);
 
     public static void main(String[] args) {
         DatabaseManager.createDatabase();
@@ -182,8 +182,9 @@ class ServiceIndexGenerator {
                 int annotationId = DatabaseManager.insertAnnotation(packageId, annotationName,
                         annotationAttachPoints.stream().map(AnnotationAttachPoint::toString)
                                 .collect(Collectors.joining(",")));
+                ModuleInfo defaultModuleInfo = ModuleInfo.from(resolvedPackage.getDefaultModule().descriptor());
                 processAnnotationSymbol(recordTypeSymbol, annotationId, new HashMap<>(), resolvedPackage,
-                        null, semanticModel, true);
+                        defaultModuleInfo, semanticModel, true);
             }
         }
     }
@@ -229,6 +230,7 @@ class ServiceIndexGenerator {
                         symbolLocation, resolvedPackage.packageName().value());
                 if (defaultValue == null) {
                     defaultValue = DefaultValueGeneratorUtil.getDefaultValueForType(fieldType);
+                } else {
                 }
             } else {
                 defaultValue = DefaultValueGeneratorUtil.getDefaultValueForType(fieldType);

@@ -65,7 +65,7 @@ CREATE TABLE AnnotationField (
     annotation_field_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     description TEXT,
-    kind TEXT CHECK(kind IN ('REQUIRED', 'DEFAULTABLE', 'OPTIONAL', 'INCLUDED_RECORD_REST')),
+    kind TEXT CHECK(kind IN ('FIELD', 'INCLUDED_RECORD_REST')),
     type JSON, -- JSON type for parameter type information
     default_value TEXT,
     optional INTEGER CHECK(optional IN (0, 1)),
