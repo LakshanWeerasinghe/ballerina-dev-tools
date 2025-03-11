@@ -303,7 +303,7 @@ class CodeAnalyzer extends NodeVisitor {
                     .object(classSymbol.get().getName().orElse(""))
                     .symbol(functionName)
                     .stepOut()
-                .properties().callExpression(expressionNode, Property.CONNECTION_KEY);
+                .properties().callConnectionExpr(expressionNode);
         processFunctionSymbol(remoteMethodCallActionNode, remoteMethodCallActionNode.arguments(), functionSymbol,
                 functionData);
 
@@ -470,7 +470,7 @@ class CodeAnalyzer extends NodeVisitor {
                     .resourcePath(resourcePathTemplate.resourcePathTemplate())
                     .stepOut()
                 .properties()
-                .callExpression(expressionNode, Property.CONNECTION_KEY)
+                .callConnectionExpr(expressionNode)
                 .data(this.typedBindingPatternNode, false, new HashSet<>());
         processFunctionSymbol(clientResourceAccessActionNode, argumentNodes, functionSymbol, functionData);
     }
@@ -1332,7 +1332,7 @@ class CodeAnalyzer extends NodeVisitor {
                     .symbol(functionName)
                     .stepOut()
                 .properties()
-                .callExpression(expressionNode, Property.CONNECTION_KEY);
+                .callMethodCall(expressionNode);
     }
 
     @Override

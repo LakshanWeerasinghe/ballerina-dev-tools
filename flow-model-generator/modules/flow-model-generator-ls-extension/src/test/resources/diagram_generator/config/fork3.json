@@ -325,8 +325,8 @@
                   },
                   "connection": {
                     "metadata": {
-                      "label": "Connection",
-                      "description": "Connection to use"
+                      "label": "Variable Name",
+                      "description": "Name of the variable"
                     },
                     "valueType": "EXPRESSION",
                     "value": "            results",
@@ -532,8 +532,8 @@
                   },
                   "connection": {
                     "metadata": {
-                      "label": "Connection",
-                      "description": "Connection to use"
+                      "label": "Variable Name",
+                      "description": "Name of the variable"
                     },
                     "valueType": "EXPRESSION",
                     "value": "            results",
