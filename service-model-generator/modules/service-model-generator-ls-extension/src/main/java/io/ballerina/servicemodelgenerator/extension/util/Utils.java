@@ -866,6 +866,50 @@ public final class Utils {
         return annots.size();
     }
 
+    public static int addFunctionAnnotationTextEdits(Function function, FunctionDefinitionNode functionDefinitionNode,
+                                                    List<TextEdit> edits) {
+        NodeList<Token> qualifiers = functionDefinitionNode.qualifierList();
+        if (qualifiers.isEmpty()) {
+            return 0;
+        }
+        Token firstQualifier = functionDefinitionNode.qualifierList().get(0);
+
+        List<String> annots = getAnnotationEdits(function.getProperties());
+        String annotEdit = String.join(System.lineSeparator(), annots);
+        annotEdit += System.lineSeparator();
+
+        Optional<MetadataNode> metadata = functionDefinitionNode.metadata();
+        if (metadata.isEmpty()) { // metadata is empty and function model has annotations
+            if (!annotEdit.isEmpty()) {
+                edits.add(new TextEdit(toRange(firstQualifier.lineRange().startLine()), annotEdit));
+            }
+            return annots.size();
+        }
+        NodeList<AnnotationNode> annotations = metadata.get().annotations();
+        if (annotations.isEmpty()) { // metadata is present but no annotations
+            if (!annotEdit.isEmpty()) {
+                edits.add(new TextEdit(toRange(metadata.get().lineRange()), annotEdit));
+            }
+            return annots.size();
+        }
+
+        // first annotation end line range
+        int size = annotations.size();
+        LinePosition firstAnnotationEndLinePos = annotations.get(0).lineRange().startLine();
+
+        // last annotation end line range
+        LinePosition lastAnnotationEndLinePos = annotations.get(size - 1).lineRange().endLine();
+
+        LineRange range = LineRange.from(firstQualifier.lineRange().fileName(),
+                firstAnnotationEndLinePos, lastAnnotationEndLinePos);
+
+        if (!annotEdit.isEmpty()) {
+            edits.add(new TextEdit(toRange(range), annotEdit));
+        }
+
+        return annots.size();
+    }
+
     public static String getValueString(Value value) {
         if (Objects.isNull(value)) {
             return "";

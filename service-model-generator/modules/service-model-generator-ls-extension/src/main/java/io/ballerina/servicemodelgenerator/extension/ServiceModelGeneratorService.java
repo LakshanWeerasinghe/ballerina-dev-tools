@@ -124,6 +124,7 @@ import static io.ballerina.servicemodelgenerator.extension.util.ServiceModelUtil
 import static io.ballerina.servicemodelgenerator.extension.util.ServiceModelUtils.updateFunctionList;
 import static io.ballerina.servicemodelgenerator.extension.util.ServiceModelUtils.updateGenericServiceModel;
 import static io.ballerina.servicemodelgenerator.extension.util.ServiceModelUtils.updateListenerItems;
+import static io.ballerina.servicemodelgenerator.extension.util.Utils.addFunctionAnnotationTextEdits;
 import static io.ballerina.servicemodelgenerator.extension.util.Utils.addServiceAnnotationTextEdits;
 import static io.ballerina.servicemodelgenerator.extension.util.Utils.expectsTriggerByName;
 import static io.ballerina.servicemodelgenerator.extension.util.Utils.filterTriggers;
@@ -805,6 +806,8 @@ public class ServiceModelGeneratorService implements ExtendedLanguageServerServi
                         parentService.kind().equals(SyntaxKind.CLASS_DEFINITION))) {
                     return new CommonSourceResponse();
                 }
+
+                addFunctionAnnotationTextEdits(function, functionDefinitionNode, edits);
 
                 String functionName = functionDefinitionNode.functionName().text().trim();
                 LineRange nameRange = functionDefinitionNode.functionName().lineRange();
