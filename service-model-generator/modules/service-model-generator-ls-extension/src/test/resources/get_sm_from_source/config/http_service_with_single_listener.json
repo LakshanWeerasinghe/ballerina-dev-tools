@@ -6,7 +6,7 @@
     "offset": 0
   },
   "end": {
-    "line": 24,
+    "line": 28,
     "offset": 0
   },
   "response": {
@@ -114,7 +114,7 @@
           "offset": 0
         },
         "endLine": {
-          "line": 24,
+          "line": 28,
           "offset": 1
         }
       },
@@ -189,7 +189,8 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
-        }
+        },
+        "properties": {}
       },
       {
         "metadata": {
@@ -923,13 +924,46 @@
               "offset": 4
             },
             "endLine": {
-              "line": 23,
+              "line": 27,
               "offset": 5
             }
           },
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
+        },
+        "properties": {
+          "annotResourceConfig": {
+            "metadata": {
+              "label": "Resource Configuration",
+              "description": "Advanced configurations for the resource"
+            },
+            "enabled": false,
+            "editable": true,
+            "value": "{\n        consumes: [],\n        produces: []\n    }",
+            "valueType": "EXPRESSION",
+            "valueTypeConstraint": "http:HttpResourceConfig",
+            "isType": false,
+            "placeholder": "{}",
+            "optional": true,
+            "advanced": true,
+            "codedata": {
+              "inListenerInit": false,
+              "isBasePath": false,
+              "inDisplayAnnotation": false,
+              "type": "ANNOTATION_ATTACHMENT",
+              "originalName": "ResourceConfig"
+            },
+            "addNewButton": false,
+            "typeMembers": [
+              {
+                "type": "HttpResourceConfig",
+                "packageInfo": "ballerina:http:2.12.2",
+                "kind": "RECORD_TYPE",
+                "selected": true
+              }
+            ]
+          }
         }
       }
     ]

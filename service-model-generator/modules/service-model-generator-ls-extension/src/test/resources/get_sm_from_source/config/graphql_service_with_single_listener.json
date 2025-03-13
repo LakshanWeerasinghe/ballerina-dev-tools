@@ -263,7 +263,8 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
-        }
+        },
+        "properties": {}
       },
       {
         "metadata": {
@@ -429,7 +430,8 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
-        }
+        },
+        "properties": {}
       },
       {
         "metadata": {
@@ -644,7 +646,8 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
-        }
+        },
+        "properties": {}
       },
       {
         "metadata": {
@@ -758,7 +761,8 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
-        }
+        },
+        "properties": {}
       }
     ]
   }

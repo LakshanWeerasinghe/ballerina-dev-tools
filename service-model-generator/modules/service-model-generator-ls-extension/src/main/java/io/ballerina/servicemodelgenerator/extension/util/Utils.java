@@ -644,6 +644,12 @@ public final class Utils {
                 .anyMatch(newParameter -> newParameter.getType().getValue()
                         .equals(parameter.getType().getValue())));
         commonFunction.getParameters().forEach(functionModel::addParameter);
+        commonFunction.getProperties().forEach((k, v) -> {
+            if (functionModel.getProperties().containsKey(k)) {
+                Value property = functionModel.getProperties().get(k);
+                property.setValue(v.getValue());
+            }
+        });
     }
 
     public static void populateListenerInfo(Service serviceModel, ServiceDeclarationNode serviceNode) {
@@ -696,10 +702,10 @@ public final class Utils {
             String[] split = annotName.split(":");
             annotName = split[split.length - 1];
             String propertyName = "annot" + annotName;
-            if (function.getProperties().containsKey(propertyName)) {
-                Value property = function.getProperties().get(propertyName);
-                property.setValue(annotationNode.annotValue().get().toSourceCode().trim());
-            }
+            Value property = new Value.ValueBuilder()
+                    .setValue(annotationNode.annotValue().get().toSourceCode().trim())
+                    .build();
+            function.getProperties().put(propertyName, property);
         });
     }
 

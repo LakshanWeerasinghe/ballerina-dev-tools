@@ -679,6 +679,39 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
+        },
+        "properties": {
+          "annotResourceConfig": {
+            "metadata": {
+              "label": "Resource Configuration",
+              "description": "Advanced configurations for the resource"
+            },
+            "enabled": false,
+            "editable": true,
+            "value": "",
+            "valueType": "EXPRESSION",
+            "valueTypeConstraint": "http:HttpResourceConfig",
+            "isType": false,
+            "placeholder": "{}",
+            "optional": true,
+            "advanced": true,
+            "codedata": {
+              "inListenerInit": false,
+              "isBasePath": false,
+              "inDisplayAnnotation": false,
+              "type": "ANNOTATION_ATTACHMENT",
+              "originalName": "ResourceConfig"
+            },
+            "addNewButton": false,
+            "typeMembers": [
+              {
+                "type": "HttpResourceConfig",
+                "packageInfo": "ballerina:http:2.12.2",
+                "kind": "RECORD_TYPE",
+                "selected": true
+              }
+            ]
+          }
         }
       },
       {
@@ -1314,6 +1347,39 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
+        },
+        "properties": {
+          "annotResourceConfig": {
+            "metadata": {
+              "label": "Resource Configuration",
+              "description": "Advanced configurations for the resource"
+            },
+            "enabled": false,
+            "editable": true,
+            "value": "",
+            "valueType": "EXPRESSION",
+            "valueTypeConstraint": "http:HttpResourceConfig",
+            "isType": false,
+            "placeholder": "{}",
+            "optional": true,
+            "advanced": true,
+            "codedata": {
+              "inListenerInit": false,
+              "isBasePath": false,
+              "inDisplayAnnotation": false,
+              "type": "ANNOTATION_ATTACHMENT",
+              "originalName": "ResourceConfig"
+            },
+            "addNewButton": false,
+            "typeMembers": [
+              {
+                "type": "HttpResourceConfig",
+                "packageInfo": "ballerina:http:2.12.2",
+                "kind": "RECORD_TYPE",
+                "selected": true
+              }
+            ]
+          }
         }
       },
       {
@@ -1949,6 +2015,39 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
+        },
+        "properties": {
+          "annotResourceConfig": {
+            "metadata": {
+              "label": "Resource Configuration",
+              "description": "Advanced configurations for the resource"
+            },
+            "enabled": false,
+            "editable": true,
+            "value": "",
+            "valueType": "EXPRESSION",
+            "valueTypeConstraint": "http:HttpResourceConfig",
+            "isType": false,
+            "placeholder": "{}",
+            "optional": true,
+            "advanced": true,
+            "codedata": {
+              "inListenerInit": false,
+              "isBasePath": false,
+              "inDisplayAnnotation": false,
+              "type": "ANNOTATION_ATTACHMENT",
+              "originalName": "ResourceConfig"
+            },
+            "addNewButton": false,
+            "typeMembers": [
+              {
+                "type": "HttpResourceConfig",
+                "packageInfo": "ballerina:http:2.12.2",
+                "kind": "RECORD_TYPE",
+                "selected": true
+              }
+            ]
+          }
         }
       },
       {
@@ -2584,6 +2683,39 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
+        },
+        "properties": {
+          "annotResourceConfig": {
+            "metadata": {
+              "label": "Resource Configuration",
+              "description": "Advanced configurations for the resource"
+            },
+            "enabled": false,
+            "editable": true,
+            "value": "",
+            "valueType": "EXPRESSION",
+            "valueTypeConstraint": "http:HttpResourceConfig",
+            "isType": false,
+            "placeholder": "{}",
+            "optional": true,
+            "advanced": true,
+            "codedata": {
+              "inListenerInit": false,
+              "isBasePath": false,
+              "inDisplayAnnotation": false,
+              "type": "ANNOTATION_ATTACHMENT",
+              "originalName": "ResourceConfig"
+            },
+            "addNewButton": false,
+            "typeMembers": [
+              {
+                "type": "HttpResourceConfig",
+                "packageInfo": "ballerina:http:2.12.2",
+                "kind": "RECORD_TYPE",
+                "selected": true
+              }
+            ]
+          }
         }
       },
       {
@@ -3219,6 +3351,39 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
+        },
+        "properties": {
+          "annotResourceConfig": {
+            "metadata": {
+              "label": "Resource Configuration",
+              "description": "Advanced configurations for the resource"
+            },
+            "enabled": false,
+            "editable": true,
+            "value": "",
+            "valueType": "EXPRESSION",
+            "valueTypeConstraint": "http:HttpResourceConfig",
+            "isType": false,
+            "placeholder": "{}",
+            "optional": true,
+            "advanced": true,
+            "codedata": {
+              "inListenerInit": false,
+              "isBasePath": false,
+              "inDisplayAnnotation": false,
+              "type": "ANNOTATION_ATTACHMENT",
+              "originalName": "ResourceConfig"
+            },
+            "addNewButton": false,
+            "typeMembers": [
+              {
+                "type": "HttpResourceConfig",
+                "packageInfo": "ballerina:http:2.12.2",
+                "kind": "RECORD_TYPE",
+                "selected": true
+              }
+            ]
+          }
         }
       },
       {
@@ -4082,6 +4247,39 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
+        },
+        "properties": {
+          "annotResourceConfig": {
+            "metadata": {
+              "label": "Resource Configuration",
+              "description": "Advanced configurations for the resource"
+            },
+            "enabled": false,
+            "editable": true,
+            "value": "",
+            "valueType": "EXPRESSION",
+            "valueTypeConstraint": "http:HttpResourceConfig",
+            "isType": false,
+            "placeholder": "{}",
+            "optional": true,
+            "advanced": true,
+            "codedata": {
+              "inListenerInit": false,
+              "isBasePath": false,
+              "inDisplayAnnotation": false,
+              "type": "ANNOTATION_ATTACHMENT",
+              "originalName": "ResourceConfig"
+            },
+            "addNewButton": false,
+            "typeMembers": [
+              {
+                "type": "HttpResourceConfig",
+                "packageInfo": "ballerina:http:2.12.2",
+                "kind": "RECORD_TYPE",
+                "selected": true
+              }
+            ]
+          }
         }
       },
       {
@@ -4639,6 +4837,39 @@
           "inListenerInit": false,
           "isBasePath": false,
           "inDisplayAnnotation": false
+        },
+        "properties": {
+          "annotResourceConfig": {
+            "metadata": {
+              "label": "Resource Configuration",
+              "description": "Advanced configurations for the resource"
+            },
+            "enabled": false,
+            "editable": true,
+            "value": "",
+            "valueType": "EXPRESSION",
+            "valueTypeConstraint": "http:HttpResourceConfig",
+            "isType": false,
+            "placeholder": "{}",
+            "optional": true,
+            "advanced": true,
+            "codedata": {
+              "inListenerInit": false,
+              "isBasePath": false,
+              "inDisplayAnnotation": false,
+              "type": "ANNOTATION_ATTACHMENT",
+              "originalName": "ResourceConfig"
+            },
+            "addNewButton": false,
+            "typeMembers": [
+              {
+                "type": "HttpResourceConfig",
+                "packageInfo": "ballerina:http:2.12.2",
+                "kind": "RECORD_TYPE",
+                "selected": true
+              }
+            ]
+          }
         }
       }
     ]
