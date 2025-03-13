@@ -375,6 +375,7 @@ public final class Utils {
         });
         functionModel.setParameters(parameterModels);
         functionModel.setCodedata(new Codedata(functionDefinitionNode.lineRange()));
+        updateFunctionAnnotationAttachmentProperty(functionDefinitionNode, functionModel);
         return functionModel;
     }
 
@@ -675,6 +676,28 @@ public final class Utils {
             String propertyName = "annot" + annotName;
             if (service.getProperties().containsKey(propertyName)) {
                 Value property = service.getProperties().get(propertyName);
+                property.setValue(annotationNode.annotValue().get().toSourceCode().trim());
+            }
+        });
+    }
+
+    public static void updateFunctionAnnotationAttachmentProperty(FunctionDefinitionNode functionDefinitionNode,
+                                                                  Function function) {
+        Optional<MetadataNode> metadata = functionDefinitionNode.metadata();
+        if (metadata.isEmpty()) {
+            return;
+        }
+
+        metadata.get().annotations().forEach(annotationNode -> {
+            if (annotationNode.annotValue().isEmpty()) {
+                return;
+            }
+            String annotName = annotationNode.annotReference().toString().trim();
+            String[] split = annotName.split(":");
+            annotName = split[split.length - 1];
+            String propertyName = "annot" + annotName;
+            if (function.getProperties().containsKey(propertyName)) {
+                Value property = function.getProperties().get(propertyName);
                 property.setValue(annotationNode.annotValue().get().toSourceCode().trim());
             }
         });
