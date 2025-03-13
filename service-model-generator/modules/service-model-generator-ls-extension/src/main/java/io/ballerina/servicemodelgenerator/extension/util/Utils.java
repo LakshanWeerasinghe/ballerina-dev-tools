@@ -745,7 +745,7 @@ public final class Utils {
 
     public static String getServiceDeclarationNode(Service service, FunctionAddContext context) {
         StringBuilder builder = new StringBuilder();
-        List<String> annots = getAnnotationEdits(service);
+        List<String> annots = getAnnotationEdits(service.getProperties());
 
         if (!annots.isEmpty()) {
             builder.append(String.join(System.lineSeparator(), annots));
@@ -811,14 +811,14 @@ public final class Utils {
                 "    }";
     }
 
-    private static List<String> getAnnotationEdits(Service service) {
-        Map<String, Value> properties = service.getProperties();
+    public static List<String> getAnnotationEdits(Map<String, Value> properties) {
         List<String> annots = new ArrayList<>();
         for (Map.Entry<String, Value> property : properties.entrySet()) {
             Value value = property.getValue();
+            String moduleName = value.getValueTypeConstraint().trim().split(":")[0];
             if (Objects.nonNull(value.getCodedata()) && Objects.nonNull(value.getCodedata().getType()) &&
                     value.getCodedata().getType().equals("ANNOTATION_ATTACHMENT") && value.isEnabledWithValue()) {
-                String ref = service.getModuleName() + ":" + value.getCodedata().getOriginalName();
+                String ref = moduleName + ":" + value.getCodedata().getOriginalName();
                 String annotTemplate = "@%s%s".formatted(ref, value.getValue());
                 annots.add(annotTemplate);
             }
@@ -830,7 +830,7 @@ public final class Utils {
                                                     List<TextEdit> edits) {
         Token serviceKeyword = serviceNode.serviceKeyword();
 
-        List<String> annots = getAnnotationEdits(service);
+        List<String> annots = getAnnotationEdits(service.getProperties());
         String annotEdit = String.join(System.lineSeparator(), annots);
         annotEdit += System.lineSeparator();
 

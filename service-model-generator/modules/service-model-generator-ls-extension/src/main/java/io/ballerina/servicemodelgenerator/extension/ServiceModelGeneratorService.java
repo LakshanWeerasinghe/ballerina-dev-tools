@@ -127,6 +127,7 @@ import static io.ballerina.servicemodelgenerator.extension.util.ServiceModelUtil
 import static io.ballerina.servicemodelgenerator.extension.util.Utils.addServiceAnnotationTextEdits;
 import static io.ballerina.servicemodelgenerator.extension.util.Utils.expectsTriggerByName;
 import static io.ballerina.servicemodelgenerator.extension.util.Utils.filterTriggers;
+import static io.ballerina.servicemodelgenerator.extension.util.Utils.getAnnotationEdits;
 import static io.ballerina.servicemodelgenerator.extension.util.Utils.getFunction;
 import static io.ballerina.servicemodelgenerator.extension.util.Utils.getFunctionSignature;
 import static io.ballerina.servicemodelgenerator.extension.util.Utils.getImportStmt;
@@ -510,16 +511,27 @@ public class ServiceModelGeneratorService implements ExtendedLanguageServerServi
                 }
                 ServiceDeclarationNode serviceNode = (ServiceDeclarationNode) node;
                 List<String> statusCodeResponses = new ArrayList<>();
-                String functionDefinition = ServiceModelGeneratorConstants.LINE_SEPARATOR +
-                        "\t" + getFunction(request.function(), statusCodeResponses, Utils.FunctionBodyKind.DO_BLOCK,
-                        Utils.FunctionAddContext.RESOURCE_ADD)
-                        .replace(ServiceModelGeneratorConstants.LINE_SEPARATOR,
-                                ServiceModelGeneratorConstants.LINE_SEPARATOR + "\t")
-                        + ServiceModelGeneratorConstants.LINE_SEPARATOR;
+
+                StringBuilder resourceFunctionBuilder = new StringBuilder();
+                resourceFunctionBuilder.append(ServiceModelGeneratorConstants.LINE_SEPARATOR)
+                        .append("\t");
+
+                List<String> annots = getAnnotationEdits(request.function().getProperties());
+                if (!annots.isEmpty()) {
+                    resourceFunctionBuilder.append(String.join(System.lineSeparator(), annots));
+                    resourceFunctionBuilder.append(System.lineSeparator());
+                }
+
+                String functionDefinition = getFunction(request.function(), statusCodeResponses,
+                        Utils.FunctionBodyKind.DO_BLOCK, Utils.FunctionAddContext.RESOURCE_ADD).replace(
+                                ServiceModelGeneratorConstants.LINE_SEPARATOR,
+                                ServiceModelGeneratorConstants.LINE_SEPARATOR + "\t");
+                resourceFunctionBuilder.append(functionDefinition);
+                resourceFunctionBuilder.append(ServiceModelGeneratorConstants.LINE_SEPARATOR);
 
                 List<TextEdit> textEdits = new ArrayList<>();
                 LineRange serviceEnd = serviceNode.closeBraceToken().lineRange();
-                textEdits.add(new TextEdit(Utils.toRange(serviceEnd.startLine()), functionDefinition));
+                textEdits.add(new TextEdit(Utils.toRange(serviceEnd.startLine()), resourceFunctionBuilder.toString()));
                 String statusCodeResEdits = statusCodeResponses.stream()
                         .collect(Collectors.joining(ServiceModelGeneratorConstants.LINE_SEPARATOR
                                 + ServiceModelGeneratorConstants.LINE_SEPARATOR));
